@@ -1,0 +1,113 @@
+<!-- /templates/customers/order.liquid -->
+<section class="h-screen bg-gray-200 flex flex-col-reverse sm:flex-row min-h-0 min-w-0">
+    <main class="sm:h-full flex-1 flex flex-col min-h-0 min-w-0">
+        <section class="flex-1 pt-3 md:p-6 lg:mb-0 lg:min-h-0 lg:min-w-0">
+            <div class="flex flex-col lg:flex-row h-full w-full">
+
+                <div class="border pb-2 lg:pb-0 w-full lg:max-w-sm px-3 flex flex-row lg:flex-col flex-wrap lg:flex-nowrap">
+                    <!-- control content left -->
+                    <div class="p-4 bg-gray-300 w-full mb-4">
+                        <h2 class="mb-3 text-2xl font-medium">Billing Address</h2>
+                        {{order.billing_address | format_address}}
+                        <span>Payment Status:
+                            <span class="text-white inline-block bg-green-500 hover:bg-green-600 px-2 py-1 my-2 rounded">{{ order.financial_status | capitalize}}</span>
+                        </span>
+                    </div>
+
+                    <div class="p-4 bg-gray-300 w-full mb-4">
+                        <h2 class="mb-3 text-2xl font-medium">Shipping Address</h2>
+                        {{order.shipping_address | format_address}}
+                        <span>Fulfillment Status:
+                            <span class="text-white inline-block bg-green-500 hover:bg-green-600 px-2 py-1 my-2 rounded">{{ order.fulfillment_status | capitalize}}</span>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="border h-full w-full lg:flex-1 px-3 min-h-0 min-w-0">
+
+                    <!-- overflow content right -->
+                    <div class="w-full h-full min-h-0 min-w-0">
+                        {% paginate customer.orders by 10 %}
+                            {% if customer.orders.size != 0 %}
+                                <table class="w-full text-md bg-white shadow-md rounded mb-4">
+                                    <tbody class="overflow-scroll">
+                                        <tr class="border-b">
+                                            <th class="text-left p-3 px-5">Product</th>
+                                            <th class="text-left p-3 px-5">SKU</th>
+                                            <th class="text-left p-3 px-5">Price</th>
+                                            <th class="text-left p-3 px-5">Quantity</th>
+                                            <th class="text-left p-3 px-5">Total</th>
+                                        </tr>
+                                        {% for line_item in order.line_items %}
+                                            <tr class="border-b hover:bg-orange-100 bg-gray-100">
+                                                <td class="p-3 px-5">
+                                                    {{ line_item.title | link_to: line_item.product.url }}
+                                                </td>
+                                                <td class="p-3 px-5">{{ line_item.sku }}</td>
+                                                <td class="p-3 px-5">{{ line_item.original_price | money }}</td>
+                                                <td class="p-3 px-5">{{ line_item.quantity }}</td>
+                                                <td class="p-3 px-5">{{ line_item.line_price | money }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                      <tr class="border-b hover:bg-orange-100 bg-gray-100">
+                                        <td colspan="4" class="p-3 px-5">SUBTOTAL</td>
+                                        <td class="p-3 px-5">{{order.line_items_subtotal_price | money }}</td>
+                                      </tr>
+                                    </tfoot>
+                                </table>
+                            {% else %}
+                                <p>You haven't placed any orders yet.</p>
+                            {% endif %}
+                            {{ paginate | default_pagination }}
+                        {% endpaginate %}
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</section>
+
+<h2>Billing Address</h2>
+<p>
+    <span>Payment Status:</span>
+    <span class="status_{{ order.financial_status }}">{{ order.financial_status }}</span>
+</p>
+<p>{{ order.billing_address.name }}</p>
+<p>{{ order.billing_address.company }}</p>
+<p>{{ order.billing_address.street }}</p>
+<p>{{ order.billing_address.city }},
+    {{ order.billing_address.province }}</p>
+<p>{{ order.billing_address.country }}
+    {{ order.billing_address.zip }}</p>
+<p>{{ order.billing_address.phone }}</p>
+
+<h2>Shipping Address</h2>
+<p>
+    <span>Fulfillment Status:</span>
+    <span class="status_{{ order.fulfillment_status }}">{{ order.fulfillment_status }}</span>
+</p>
+<p>{{ order.shipping_address.name }}</p>
+<p>{{ order.shipping_address.company }}</p>
+<p>{{ order.shipping_address.street }}</p>
+<p>{{ order.shipping_address.city }},
+    {{ order.shipping_address.province }}</p>
+<p>{{ order.shipping_address.country }}
+    {{ order.shipping_address.zip }}</p>
+<p>{{ order.shipping_address.phone }}</p>
+
+<h2>Order Items</h2>
+<table>
+    {% for line_item in order.line_items %}
+        <tr>
+            <td>{{ line_item.title | link_to: line_item.product.url }}</td>
+            <td>{{ line_item.sku }}</td>
+            <td>{{ line_item.original_price | money }}</td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.line_price | money }}</td>
+        </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,56 @@
+<section class="text-gray-600 body-font bg-gray-200">
+    <div class="container px-5 py-16 mx-auto">
+        <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">{{ collections.title }}</h1>
+        </div>
+        <div class="flex flex-wrap -m-4">
+            {% for product in collections[section.settings.featured_collection].products %}
+                {% assign image = product.featured_media.preview_image %}
+
+                <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
+                    <a href="{{product.url}}" class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+                        {% if image != blank %}
+                            <img alt="ecommerce" class="lg:h-48 md:h-36 w-full object-cover object-center" src="{{image | img_url: "large"}}">
+
+                        {% else %}
+                            {{'product-1' | placeholder_svg_tag: 'card-img-top'}}
+                        {% endif %}
+                    </a>
+                    <div class="mt-4">
+                        <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{product.tags}}</h3>
+                        <h2 class="text-gray-900 title-font text-lg font-medium">{{product.title}}</h2>
+                        <p class="mt-1">{{product.price | money_without_trailing_zeros}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+{% schema %}
+{
+    "name":"Featured Collection",
+    "class":"featured-collection-section",
+    "settings":[
+    {
+        "type": "collection",
+        "id": "featured_collection",
+        "label":"Collection"
+    },
+    {
+        "type":"text",
+        "id":"title",
+        "default":"Featured Collection",
+        "label":"Title"
+    }],
+    "presets":[
+      {
+          "category":"Collection",
+          "name":"Featured Collection"
+          
+      }
+        ]
+
+}
+{% endschema %}

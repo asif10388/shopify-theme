@@ -1,0 +1,62 @@
+<!-- /templates/customers/account.liquid -->
+
+<section class="h-screen bg-gray-200 flex flex-col-reverse sm:flex-row min-h-0 min-w-0">
+    <main class="sm:h-full flex-1 flex flex-col min-h-0 min-w-0">
+        <section class="flex-1 pt-3 md:p-6 lg:mb-0 lg:min-h-0 lg:min-w-0">
+            <div class="flex flex-col lg:flex-row h-full w-full">
+
+                <div class="border pb-2 lg:pb-0 w-full lg:max-w-sm px-3 flex flex-row lg:flex-col flex-wrap lg:flex-nowrap">
+
+                    <!-- control content left -->
+                    <div class="p-4 bg-gray-300 w-full mb-4">
+                        <h2 class="mb-3 text-2xl font-medium">Account</h2>
+                        {{customer.default_address | format_address}}
+                        <a class="text-white inline-block bg-green-500 hover:bg-green-600 px-2 py-1 my-2 rounded" href="{{routes.account_addresses_url}}">View Addresses</a>
+                        <br>
+                        <span>Total Addresses:
+                            <span class="font-medium">{{customer.addresses_count}}</span>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="border h-full w-full lg:flex-1 px-3 min-h-0 min-w-0">
+
+                    <!-- overflow content right -->
+                    <div class="w-full h-full min-h-0 min-w-0">
+                        {% paginate customer.orders by 10 %}
+                            {% if customer.orders.size != 0 %}
+                                <table class="w-full text-md bg-white shadow-md rounded mb-4">
+                                    <tbody class="overflow-scroll">
+                                        <tr class="border-b">
+                                            <th class="text-left p-3 px-5">Order #</th>
+                                            <th class="text-left p-3 px-5">Fulfillment Status</th>
+                                            <th class="text-left p-3 px-5">Payment Status</th>
+                                            <th class="text-left p-3 px-5">Order Date</th>
+                                            <th class="text-left p-3 px-5">Total</th>
+                                        </tr>
+                                        {% for order in customer.orders %}
+                                            <tr class="border-b hover:bg-orange-100 bg-gray-100">
+                                                <td class="p-3 px-5">
+                                                    <a href="{{order.customer_url}}">{{order.name}}</a>
+                                                </td>
+                                                <td class="p-3 px-5">{{order.fulfillment_status_label}}</td>
+                                                <td class="p-3 px-5">{{order.financial_status_label}}</td>
+                                                <td class="p-3 px-5">{{order.created_at | time_tag: format: 'date'}}</td>
+                                                <td class="p-3 px-5">{{order.total_price | money}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>You haven't placed any orders yet.</p>
+                            {% endif %}
+                            {{ paginate | default_pagination }}
+                        {% endpaginate %}
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</section>

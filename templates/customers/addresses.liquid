@@ -1,0 +1,138 @@
+<!-- /templates/customers/addresses.liquid -->
+
+  <div class="container px-5 py-8 mx-auto">
+    <div class="flex flex-col text-center w-full mb-5">
+      <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Addresses</h1>
+      <a href = "#address-form" class="flex mx-auto mt-2 text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg">Create New Address</a>
+    </div>
+    <div class="flex flex-wrap">
+        {% for address in customer.addresses %}
+            
+        <div class="xl:w-1/4 lg:w-1/2 md:w-full px-8 py-6 shadow mx-2 bg-gray-100">
+              <div>{{address | format_address}}</div>
+        <form action="/account/addresses/{{address.id}}" method="POST">
+        <input type="hidden" name="_method" value = delete>
+        <button class="flex mt-4 text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Delete</button>
+        </form>
+        </div>
+
+        {% endfor %}
+    </div>
+  </div>
+
+  <section id = "address-form" class="text-gray-600 body-font relative">
+  <div class="container px-5 py-24 mx-auto">
+    <div class="flex flex-col text-center w-full mb-4">
+      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Contact Us</h1>
+    </div>
+    <div class="lg:w-1/2 md:w-2/3 mx-auto">
+        {% form 'customer_address', customer.new_address %}
+      <div class="flex flex-wrap -m-2">
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">First Name</label>
+            <input type="text" value="" name="address[first_name]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="email" class="leading-7 text-sm text-gray-600">Last Name</label>
+            <input type="text" value="" name="address[last_name]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Company</label>
+            <input type="text" value="" name="address[company]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Address</label>
+            <input type="text" value="" name="address[address1]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Apartment, suite, etc.</label>
+            <input type="text" value="" name="address[address2]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">City</label>
+            <input type="text" value="" name="address[city]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Country/Region</label>
+            <select name="address[country]" id = "countryAddresses" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">{{all_country_option_tags}}</select>
+            
+          </div>
+        </div>
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Province</label>
+            <select name="address[province]" id = "provinceAddresses" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" disabled="disabled"></select>
+            
+          </div>
+        </div>
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Postal code</label>
+            <input type="text" value="" name="address[zip]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-1/2">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Phone</label>
+            <input type="tel" value="" name="address[phone]" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <button type = "submit" class="flex mx-auto text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg">Submit</button>
+        </div>
+    </div>
+    {% endform %}
+    </div>
+  </div>
+</section>
+
+<h2>New Address</h2>
+{% form 'customer_address', customer.new_address %}
+
+{{ form.errors | default_errors }}
+
+<label for="first_name">First Name</label>
+<input type="text" value="" name="address[first_name]" size="30" />
+
+<label for="last_name">Last Name</label>
+<input type="text" value="" name="address[last_name]" size="30" />
+
+<label for="company">Company</label>
+<input type="text" value="" name="address[company]" />
+
+<label for="address1">Address 1</label>
+<input type="text" value="" name="address[address1]" />
+
+<label for="address2">Address 2</label>
+<input type="text" value="" name="address[address2]" />
+
+<label for="city">City</label>
+<input type="text" value="" name="address[city]" />
+
+<!-- See docs for @shopify/theme-addresses to support Country and Province -->
+<label for="country">Country</label>
+<select name="address[country]" /></select>
+
+<label for="province">Province</label>
+<select name="address[province]" /></select>
+
+<label for="zip">Zip/Post Code</label>
+<input type="text" value="" name="address[zip]" />
+
+<label for="phone">Phone Number</label>
+<input type="tel" value="" name="address[phone]" />
+
+{% endform %}

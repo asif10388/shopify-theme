@@ -1,0 +1,91 @@
+{% assign number_of_comments = article.comments_count %}
+{% if comment and comment.created_at %}
+    {% assign number_of_comments = article.comments_count %}
+{% endif %}
+
+{% capture author %}
+    <strong>{{ article.author }}</strong>
+{% endcapture %}
+
+{% capture date %}
+    <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'abbreviated_date' }}</time>
+{% endcapture %}
+
+{% capture comment_date %}
+    <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: format: 'abbreviated_date' }}</time>
+{% endcapture %}
+
+<section class="font-sans container m-auto flex flex-col py-8 max-w-xl px-6">
+    <h1 class="my-4 max-w-full m-auto text-3xl md:text-4xl lg:text-4xl font-medium text-center">{{ article.title }}</h1>
+    <label class="text-sm text-center text-gray-500">Published by
+        {{ article.author }}
+        on
+        {{ date }}</label>
+    <p class="mt-1 lg:mt-4 max-w-lg m-auto leading-loose mb-6 text-left">{{ article.content }}</p>
+</section>
+
+{% if blog.comments_enabled? %}
+    <section class="font-sans container m-auto max-w-xl py-8">
+        <h2 class="p-2 font-medium text-center underline">{{ number_of_comments }}
+            Comment{% if number_of_comments > 1 %}s
+            {% endif %}
+        </h2>
+        {% paginate article.comments by 5 %}
+            <div class="flex flex-col py-3">
+                {% for comment in article.comments %}
+                    <div class="flex p-4 shadow my-3">
+                        <div class="w-1/8">
+                            <a class="block rounded-full h-12 w-12 mr-2 bg-gray-300">
+                                <img src="{{author.user.image | img_url: "large" }}" alt="">
+                            </a>
+                        </div>
+                        <div class="w-7/8">
+                            <div class="flex justify-between">
+                                <div>
+                                    <span class="font-bold">
+                                        <a class="text-black">{{ comment.author }}</a>
+                                    </span>
+                                    <span class="text-gray-700">{{ comment_date }}</span>
+                                </div>
+                            </div>
+                            <div class="">
+                                <p class="my-3 text-sm">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if paginate.pages > 1 %}
+                {{ paginate | default_pagination }}
+            {% endif %}
+        {% endpaginate %}
+    </section>
+
+    {% form 'new_comment', article %}
+        <div class="flex flex-col text-center w-full mb-2">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Post a Comment</h1>
+        </div>
+        <div class="font-sans text-sm rounded w-full max-w-md mx-auto my-4 px-8 pt-6 pb-8">
+            <div class="relative rounded mb-4">
+                <label class="leading-7 text-sm text-gray-600" for="name">Name</label>
+                <input class="border border-gray-300 w-full py-2 px-3 text-gray-700 leading-normal rounded" name="comment[author]" id="CommentAuthor" value="{{ form.author }}">
+
+            </div>
+            <div class="relative rounded mb-4">
+                <label class="leading-7 text-sm text-gray-600" for="name">Email</label>
+                <input class="border border-gray-300 w-full py-2 px-3 text-gray-700 leading-normal rounded" type="email" name="comment[email]" id="CommentEmail" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+
+            </div>
+            <div class="relative rounded mb-4">
+                <label class="leading-7 text-sm text-gray-600" for="name">Comment</label>
+                <textarea class=" border border-gray-300 w-full py-2 px-3 text-gray-700 leading-normal rounded" id="CommentBody" name="comment[body]">{{ form.body }}</textarea>
+            </div>
+            <div class="flex w-full items-center justify-between">
+                <input class="w-full cursor-pointer bg-green-500 hover:bg-green-600 text-white py-2 px-4" type="submit" value="Post">
+            </div>
+        </div>
+        <div class="flex flex-col justify-center items-center mx-auto w-3/4 xl:w-2/4">
+            {% render 'form-error', form:form %}
+        </div>
+    {% endform %}
+{% endif %}

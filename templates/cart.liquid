@@ -1,0 +1,68 @@
+  {% if cart.item_count > 0 %}
+    <div class="container px-10 py-24 mx-auto">
+    <form action="/cart" method="post" novalidate>
+      <table class="w-full text-sm lg:text-base" cellspacing="0">
+        <thead>
+          <tr class="h-12 uppercase">
+            <th class="hidden md:table-cell"></th>
+            <th class="text-left">Product</th>
+            <th class="lg:text-right text-left pl-5 lg:pl-0">
+              <span class="lg:hidden" title="Quantity">Qtd</span>
+              <span class="hidden lg:inline">Quantity</span>
+            </th>
+            <th class="hidden text-right md:table-cell">Unit price</th>
+            <th class="text-right">Total price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart.items %}
+          <tr>
+            <td class="hidden pb-4 md:table-cell">
+               <a href="{{ item.url | within: collections.all }}">
+                <img src={{ item | img_url: 'medium' }} class="w-20 rounded" alt="Thumbnail">
+              </a>
+            </td>
+            <td>
+              <a href="{{ item.url }}" class="mb-2 md:ml-4 font-medium">{{ item.product.title }}</a>
+                <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="text-gray-700 md:ml-4">
+                  <small>(Remove item)</small>
+                </a>
+            </td>
+            <td class="justify-center md:justify-end md:flex md:mt-8">
+            <div class="w-20 h-10">
+              <div class="relative flex flex-row w-full h-8">
+
+              <input type="number" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" min="0"
+                class="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black" />
+
+              </div>
+            </div>
+
+            </td>
+            <td class="hidden text-right md:table-cell">
+              <span class="text-sm lg:text-base font-medium">
+               {{ item.price | money }}
+              </span>
+            </td>
+            <td class="text-right">
+              <span class="text-sm lg:text-base font-medium">
+              {% if item.original_line_price != item.line_price %}{{ item.original_line_price | money }}{% endif %}
+              {{ item.line_price | money }}
+              {% for discount in item.discounts %}{{ discount.title }}{% endfor %}
+              </span>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div>
+        <p class = "text-lg py-2">Sub total : {{ cart.total_price | money }}</p>
+        <button class="text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg" type="submit" name="update">Update</button>
+        <button class="text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg" type="submit" name="checkout">Checkout</button>
+      </div>
+      </form>
+      {% else %}
+      <h2>cart</h2>
+      Cart is empty
+      {% endif %}
+  </div>

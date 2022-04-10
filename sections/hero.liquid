@@ -1,0 +1,64 @@
+<section class="text-gray-600 body-font bg-gray-200">
+  <div class="container mx-auto flex px-5 py-12 md:flex-row flex-col items-center">
+    <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
+      <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">{{ section.settings.title }}</h1>
+      </h1>
+      <span class="mb-8 leading-relaxed">{{ section.settings.description }}</span>
+      
+      <div class="flex justify-center">
+        <a href = "{{ section.settings.button_link }}" class="inline-flex text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">{{ section.settings.button_label }}</a>
+      </div>
+    </div>
+    <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 -mr-14 lg:-mr-0">
+      {% if section.settings.image != blank %}
+      
+      <img class="object-contain object-center rounded" alt="hero" src="{{ section.settings.image | img_url:'large' }}">
+      {% else %}
+        {% capture current %}{% cycle 1,2 %}{% endcapture %}
+        {{'lifestyle-' | append: current | placeholder_svg_tag:'placeholder_svg'}}
+        
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+
+{
+    "name": "Hero",
+    "class": "hero-section",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Heading Image"
+        }, {
+            "type": "text",
+            "id": "title",
+            "default": "Example Heading",
+            "label": "Heading Title"
+        }, {
+            "type": "richtext",
+            "id": "description",
+            "default": "<p>Example Description</p>",
+            "label": "Description Title"
+        }, {
+            "type": "text",
+            "id": "button_label",
+            "default": "Button",
+            "label": "Heading Button Label"
+        }, {
+            "type": "url",
+            "id": "button_link",
+            "label": "Heading Button Link"
+        }
+    ],
+    "presets": [
+        {
+            "category": "Hero",
+            "name": "Simple Hero"
+        }
+    ]
+}
+
+{% endschema %}

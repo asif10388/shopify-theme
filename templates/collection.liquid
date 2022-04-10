@@ -1,0 +1,91 @@
+<div class="main-modal fixed w-full h-100 inset-0 z-50 overflow-hidden flex justify-center items-center animated fadeIn faster" style="background: rgba(0,0,0,.7);">
+    <div class="shadow-lg modal-container bg-white w-4/5 md:max-w-1/2 mx-auto rounded shadow-lg z-50 overflow-y-auto">
+        <div class="modal-content py-4 text-left px-6">
+            <!--Title-->
+            <div class="flex justify-between items-center pb-3">
+                <div class="modal-close cursor-pointer z-50">
+                    <svg class="fill-current text-black" height="18" viewbox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
+                    </svg>
+                </div>
+            </div>
+            <!--Body-->
+            <div class="my-1">
+                <div class="container px-5 py-6 mx-auto">
+                    <div class="lg:w-4/5 mx-auto flex flex-wrap">
+                        <div class="flex flex-col lg:w-1/2">
+                            <div class="w-80 h-80 rounded-lg">
+                                <img alt="ecommerce" class="w-full h-full object-cover object-center rounded" id="productImg" src="">
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-16 lg:mt-0">
+
+                            <h2 class="text-sm title-font text-gray-500 tracking-widest" id="productTags"></h2>
+                            <h1 class="text-gray-900 text-3xl title-font font-medium mb-1" id="productTitle"></h1>
+                            <p class="leading-relaxed" id="productDescription"></p>
+                            <p class="title-font font-medium text-2xl text-gray-900" id="productPrice"></p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Footer-->
+            <div class="flex justify-end pt-2">
+                <button class="focus:outline-none modal-close px-4 bg-gray-400 p-3 rounded-lg text-white hover:bg-gray-500">Cancel</button>
+                <form action="#" id="addToCartForm">
+                    <select class="ml-3 rounded border appearance-none border-gray-300 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10" id="modalSelectID" name="id">
+                    </select>
+                    <input id="modalItemId" name="id" type="hidden" value="">
+                    <input class="py-2 ml-3 rounded border-2 border-green-500" id="modalItemQuantity" min="1" name="quantity" type="number" value="1">
+                    <button class="focus:outline-none px-4 bg-green-500 p-3 ml-3 rounded-lg text-white hover:bg-green-600" type="submit">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+        <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">{{ collection.title }}</h1>
+            <div class="relative inline-flex self-center">
+                <select class="text-2xl font-medium rounded border-2 border-green-700 text-gray-600 h-14 w-60 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none" id="sort_by" name="sorting">
+                    {% for option in collection.sort_options %}
+                        <option value="{{ option.value }}" {% if option.value == collection.sort_by %} selected {% endif %}>{{ option.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+
+        {% paginate collection.products by 2 %}
+            <div class="flex flex-wrap -m-4">
+                {% for product in collection.products %}
+                    {% assign image = product.featured_media.preview_image %}
+                    <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
+                        <div class="block relative h-48 rounded overflow-hidden" onclick="openModal()">
+                            {% if image != blank %}
+                                <a href="#" id="productInfoAnchor" product-handle="{{product.handle}}" product-price="{{product.price | money_without_trailing_zeros}}">
+                                    <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="{{image | img_url: "large"}}">
+                                </a>
+
+                            {% else %}
+                                {{'product-1' | placeholder_svg_tag: 'card-img-top'}}
+                            {% endif %}
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ product.url | within: collection }}">
+                                <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{product.tags}}</h3>
+                                <h2 class="text-gray-900 title-font text-lg font-medium">{{product.title}}</h2>
+                                <p class="mt-1">{{product.price | money_without_trailing_zeros}}</p>
+                                {% unless product.available %}<br><strong>sold out</strong>
+                                {% endunless %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% render 'pagination', paginate: paginate %}
+        {% endpaginate %}
+    </div>
+</section>

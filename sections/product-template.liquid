@@ -1,0 +1,119 @@
+{% assign current_product = product.selected_or_first_available_variant %}
+{% assign product_image = current_product.featured_image | default: product.featured_image %}
+
+<section class="text-gray-600 body-font overflow-hidden">
+  <div class="container px-5 py-12 mx-auto">
+    <div class="lg:w-4/5 mx-auto flex flex-wrap">
+      <div class="flex flex-col lg:w-1/2">
+        <div class="w-96 h-96 rounded-lg">
+          <img alt="ecommerce" class="w-full h-full object-cover object-center rounded" src="{{product_image | img_url: "large"}}">
+        </div>
+        {% for image in product.images %}
+        <div class="lg:w-1/4 md:w-1/2 py-4 w-full">
+          <img class="object-contain object-center rounded" src="{{ image.src | img_url: "small"  }}" alt="{{image.alt}}">
+        </div>
+               
+        {% endfor %}
+      </div>
+      {% form 'product', product, class:"lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-16 lg:mt-0", id:"AddToCartForm" %}
+      
+        <h2 class="text-sm title-font text-gray-500 tracking-widest">{{product.tags}}</h2>
+        <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{product.title}}</h1>
+        <p class="leading-relaxed">{{product.description}}</p>
+        
+        <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
+          <div class="flex items-center">
+            <span class="mr-3">Quantity</span>
+              <input type="number" id="Quantity" name="quantity" class="bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+          </div>
+          <div class="flex ml-6 items-center">
+            <span class="mr-3">Size</span>
+            <div class="relative">
+              <select name = "id" id = "productSelect" class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
+                {% for variant in product.variants %}
+                  {% if variant.available %}
+                  <option class = "text-black placeholder:text-black" value = "{{ variant.id}}">{{variant.title}}</option>
+                  {% else %}
+                    <option value = "{{ variant.id}}" disabled = "disabled">{{variant.title}}</option>
+                  {% endif %}
+
+                {% endfor %}
+              </select>
+              <span class="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
+                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4" viewBox="0 0 24 24">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="flex">
+          <span class="title-font font-medium text-2xl text-gray-900">
+            {{current_product.price | money_without_trailing_zeros}}
+          </span>
+          <button type = "submit" name = "add" id ="AddToCard" class="flex ml-auto text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded">Add to Cart</button>
+        </div>
+        {% if section.settings.dynamic_buttons_checkbox == true %}
+            {{ form | payment_button }}
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+<div class="container px-5 py-24 mx-auto">
+    <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
+      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Products You May Like</h1>
+   </div>
+
+    <div class="flex flex-wrap -m-4" id ="product_req_body"></div>
+</div>
+
+<script>
+
+  var productReqBody = document.getElementById("product_req_body")
+
+  fetch(`/recommendations/products.json?product_id={{ product.id }}`)
+  .then((res) => res.json())
+  .then(({products}) => {
+    console.log(products);
+
+    if (products.length > 0) {
+      products.forEach(function(product, index){
+        var card = `      
+        <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
+        <a class="block relative h-48 rounded overflow-hidden">
+          <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="${product.images[0]}">
+        </a>
+        <div class="mt-4">
+          <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
+          <h2 class="text-gray-900 title-font text-lg font-medium"><a href = "${product.url}">${product.title}</a></h2>
+          <p class="mt-1">${product.description}</p>
+        </div>
+      </div>
+             ` 
+           productReqBody.innerHTML = card  
+      })
+    }else{
+      var card = `   <div class="flex flex-wrap w-full mb-5 flex-col items-center text-center">
+                        <h1 class="sm:text-2xl text-xl font-medium title-font mb-2 text-gray-900">No similar products found</h1>
+                    </div>
+                  `
+                  productReqBody.innerHTML = card
+    }
+  })
+</script>
+
+{% schema %}
+{
+    "name": "Product Pages",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "dynamic_buttons_checkbox",
+            "label": "Enable Dynamic Button",
+            "default": false
+        }
+    ]
+}
+{% endschema %}

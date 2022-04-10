@@ -1,0 +1,34 @@
+<section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+        <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">{{ collection.title }}</h1>
+        </div>
+        <div class="flex flex-wrap -m-4">
+            {% paginate collection.products by 1 %}
+                {% for product in collection.products %}
+                    {% assign image = product.featured_media.preview_image %}
+                    <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
+                        <a href="{{ product.url | within: collection }}" class="block relative h-48 rounded overflow-hidden">
+                            {% if image != blank %}
+                                <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="{{image | img_url: "large"}}">
+
+                            {% else %}
+                                {{'product-1' | placeholder_svg_tag: 'card-img-top'}}
+                            {% endif %}
+                        </a>
+                        <div class="mt-4">
+                            <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{product.tags}}</h3>
+                            <h2 class="text-gray-900 title-font text-lg font-medium">{{product.title}}</h2>
+                            <p class="mt-1">{{product.price | money_without_trailing_zeros}}</p>
+                            {% unless product.available %}<br><strong>sold out</strong>
+                            {% endunless %}
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if paginate.pages > 1 %}
+                    {{ paginate | default_pagination }}
+                {% endif %}
+            {% endpaginate %}
+        </div>
+    </div>
+</section>
